@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Models\Language;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+
+class LanguageController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $languages = Language::query();
+
+        if ($request->search) {
+            $languages = $languages->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $languages = $languages->latest()->paginate(25);
+
+        return view('admin.language.index', get_defined_vars());
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return view('admin.language.create', get_defined_vars());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'code' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['danger' => $validator->messages()->first()]);
+        }
+        try {
+
+            DB::beginTransaction();
+
+            $language = new Language;
+            $language->name = $request->name;
+            $language->code = $request->code;
+            $language->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.language.index')->withErrors(['success' => "Language Created Successfully"]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['danger' => "Database Error. Please Contact Support"]);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $language = Language::find($id);
+        return view('admin.language.edit', get_defined_vars());
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'code' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['danger' => $validator->messages()->first()]);
+        }
+        try {
+
+            DB::beginTransaction();
+
+            $language = Language::find($id);
+            if (!$language) {
+                return redirect()->back()->withErrors(['danger' => "Invalid Id"]);
+            }
+
+            $language->name = $request->name;
+            $language->code = $request->code;
+            $language->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.language.index')->withErrors(['success' => "Language Updated Successfully"]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['danger' => "Database Error. Please Contact Support"]);
+        }
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $language = Language::find($id);
+            if (!$language) {
+                return redirect()->back()->withErrors(['danger' => "Invalid Id"]);
+            }
+            $language->delete();
+
+            DB::commit();
+
+            return redirect()->back()->withErrors(['danger' => "Language Deleted"]);
+        } catch (Exception $e) {
+            DB::rollback();
+            return redirect()->back()->withErrors(['danger' => "Database Error. Please Contact Support"]);
+        }
+    }
+}

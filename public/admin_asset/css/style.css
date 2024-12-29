@@ -1,0 +1,70 @@
+/*
+
+* Override Pages default styles or create your own styles here
+
+*/
+#tableWithSearch_wrapper{
+	overflow: auto;
+}
+.jumbotron h1.large-demo-text{
+	font-size: 150px;
+}
+
+.icon-text-search{
+	font-size: 42px;
+	width: 150%;
+}
+
+.color-block-show{
+	width: 20px;
+	height: 20px;
+	display: block;
+}
+
+.cursor-pointer{
+	cursor: pointer;
+}
+
+.logo-rounded{
+	border-radius: 5px;
+}
+
+.image-delete{
+	position: relative;
+}
+
+.image-delete .delete-icon{
+	position: absolute;
+    right: -10px;
+    top: -5px;
+    width: 25px;
+    height: 25px;
+	cursor: pointer;
+}
+
+.register-card{
+	background: white;
+    padding: 20px;
+    border-radius: 10px;
+	text-align: center;
+}
+
+.configured-red{
+	width: 20px;
+	height: 20px;
+	background: rgb(255, 30, 30);
+}
+
+.configured-green{
+	width: 20px;
+	height: 20px;
+	background: rgb(113, 255, 30);
+}
+
+.width-time{
+	min-width: 8rem;
+}
+
+#translationYear{
+	height: 300px !important;
+}
